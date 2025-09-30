@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Weekly Links</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 40px; 
+      background-color: #f2f8ff; 
+      color: #333; 
+      text-align: center;
+    }
+
+    header {
+      margin-bottom: 30px;
+    }
+
+    header img {
+      max-width: 150px;
+      margin-bottom: 10px;
+    }
+
+    h1 { 
+      font-size: 2em; 
+      color: #0052cc; 
+      margin-bottom: 20px; 
+    }
+
+    .day { 
+      margin: 20px 0; 
+      background-color: #e6f0ff; 
+      border-radius: 10px; 
+      padding: 10px; 
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .day a.day-link {
+      font-weight: bold;
+      font-size: 1.2em;
+      color: #003d99;
+      text-decoration: none;
+    }
+
+    .day a.day-link:hover {
+      text-decoration: underline;
+    }
+
+    .links {
+      display: none;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .links a {
+      display: inline-block;
+      margin: 5px 10px;
+      padding: 8px 15px;
+      background-color: #0052cc;
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .links a:hover {
+      background-color: #003d99;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <!-- Replace 'logo.png' with your actual logo path -->
+      <img alt=""  src="Header.png" >
+    <h1>Weekly Schedule Links</h1>
+  </header>
+
+  <div id="week"></div>
+
+  <script>
+    // Map of Teams links (replace with your real Teams URLs)
+    const teamsLinks = {
+      monday: {
+        notice: "https://teams.microsoft.com/l/channel/19%3A5c298b61fd654f00a35f735043874002%40thread.tacv2/00.%20ALL%20STAFF%20DAILY%20NOTICES?groupId=7b805910-958d-48e3-bc03-2102704bd03c&tenantId=d2b3a7dc-d57e-417f-90ad-149b872e9aa1",
+        rerooming: "https://teams.microsoft.com/monday-rerooming",
+        cover: "https://teams.microsoft.com/l/channel/19%3A7Q8GJpqhhUakQz8RDjCciMe9r8OKMN6jusQEvlzQzlc1%40thread.tacv2/Cover%20Duty?groupId=ccf428b1-54a0-402c-9f23-228e9cd936a2&tenantId=d2b3a7dc-d57e-417f-90ad-149b872e9aa1&ngc=true&allowXTenantAccess=true",
+        duty: "https://teams.microsoft.com/monday-duty"
+      },
+      tuesday: {
+        notice: "https://teams.microsoft.com/tuesday-notice",
+        rerooming: "https://teams.microsoft.com/tuesday-rerooming",
+        cover: "https://teams.microsoft.com/l/channel/19%3A7Q8GJpqhhUakQz8RDjCciMe9r8OKMN6jusQEvlzQzlc1%40thread.tacv2/Cover%20Duty?groupId=ccf428b1-54a0-402c-9f23-228e9cd936a2&tenantId=d2b3a7dc-d57e-417f-90ad-149b872e9aa1&ngc=true&allowXTenantAccess=true",
+        duty: "https://teams.microsoft.com/tuesday-duty"
+      },
+      wednesday: {
+        notice: "https://teams.microsoft.com/wednesday-notice",
+        rerooming: "https://teams.microsoft.com/wednesday-rerooming",
+        cover: "https://teams.microsoft.com/l/channel/19%3A7Q8GJpqhhUakQz8RDjCciMe9r8OKMN6jusQEvlzQzlc1%40thread.tacv2/Cover%20Duty?groupId=ccf428b1-54a0-402c-9f23-228e9cd936a2&tenantId=d2b3a7dc-d57e-417f-90ad-149b872e9aa1&ngc=true&allowXTenantAccess=true",
+        duty: "https://teams.microsoft.com/wednesday-duty"
+      },
+      thursday: {
+        notice: "https://teams.microsoft.com/thursday-notice",
+        rerooming: "https://teams.microsoft.com/thursday-rerooming",
+        cover: "https://teams.microsoft.com/l/channel/19%3A7Q8GJpqhhUakQz8RDjCciMe9r8OKMN6jusQEvlzQzlc1%40thread.tacv2/Cover%20Duty?groupId=ccf428b1-54a0-402c-9f23-228e9cd936a2&tenantId=d2b3a7dc-d57e-417f-90ad-149b872e9aa1&ngc=true&allowXTenantAccess=true",
+        duty: "https://teams.microsoft.com/thursday-duty"
+      },
+      friday: {
+        notice: "https://teams.microsoft.com/friday-notice",
+        rerooming: "https://teams.microsoft.com/friday-rerooming",
+        cover: "https://teams.microsoft.com/l/channel/19%3A7Q8GJpqhhUakQz8RDjCciMe9r8OKMN6jusQEvlzQzlc1%40thread.tacv2/Cover%20Duty?groupId=ccf428b1-54a0-402c-9f23-228e9cd936a2&tenantId=d2b3a7dc-d57e-417f-90ad-149b872e9aa1&ngc=true&allowXTenantAccess=true",
+        duty: "https://teams.microsoft.com/friday-duty"
+      }
+    };
+
+    const weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    const today = new Date();
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay() + 1); // Monday start
+
+    const weekDiv = document.getElementById("week");
+
+    for (let i = 0; i < 5; i++) { // Monday to Friday
+      let day = new Date(startOfWeek);
+      day.setDate(startOfWeek.getDate() + i);
+
+      let dayName = weekdays[day.getDay()];
+      let dateStr = day.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' }); // e.g., 29 Sep 2025
+
+      let div = document.createElement("div");
+      div.className = "day";
+      div.innerHTML = `
+        <a href="#" class="day-link" onclick="showLinks('${dayName.toLowerCase()}')">
+          ${dayName} - ${dateStr}
+        </a>
+        <div class="links" id="${dayName.toLowerCase()}-links">
+          <a href="${teamsLinks[dayName.toLowerCase()]?.notice || '#'}" target="_blank">Notice</a>
+          <a href="${teamsLinks[dayName.toLowerCase()]?.rerooming || '#'}" target="_blank">Rerooming</a>
+          <a href="${teamsLinks[dayName.toLowerCase()]?.cover || '#'}" target="_blank">Cover</a>
+          <a href="${teamsLinks[dayName.toLowerCase()]?.duty || '#'}" target="_blank">Duty Rota</a>
+        </div>
+      `;
+      weekDiv.appendChild(div);
+    }
+
+    function showLinks(day) {
+      document.querySelectorAll('.links').forEach(el => el.style.display = "none");
+      document.getElementById(day + "-links").style.display = "block";
+    }
+  </script>
+</body>
+</html>
